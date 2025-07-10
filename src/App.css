@@ -1,0 +1,71 @@
+.App {
+  text-align: center;
+}
+
+.billy {
+  background-color: orangered;
+  margin: 5% auto;
+  padding: 10% 5%;
+  width: 90%;
+  max-width: 600px;
+  box-sizing: border-box;
+  border-radius: 10px;
+}
+
+.gilly,
+.r_gilly {
+  font-size: 3rem;
+  width: 80px;
+  height: 80px;
+  font-weight: bold;
+  margin: 10px;
+  display: inline-block;
+  line-height: 80px;
+  text-align: center;
+  color: white;
+}
+
+.gilly {
+  background-color: crimson;
+}
+
+.r_gilly {
+  background-color: rgb(39, 125, 238);
+}
+
+.L,
+.K {
+  font-size: 3rem;
+  font-weight: bold;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  -webkit-text-stroke-width: 1px;
+  display: block;
+  margin: 10px auto;
+}
+
+.L {
+  color: rgb(122, 70, 74);
+  -webkit-text-stroke-color: azure;
+}
+
+.K {
+  color: rgb(16, 231, 178);
+  -webkit-text-stroke-color: rgb(165, 130, 194);
+}
+
+/* Optional: Media query for very small screens */
+@media (max-width: 400px) {
+  .gilly,
+  .r_gilly {
+    font-size: 2.5rem;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    margin: 10px;
+  }
+
+  .L,
+  .K {
+    font-size: 2.5rem;
+  }
+}
