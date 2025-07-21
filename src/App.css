@@ -83,6 +83,7 @@ body {
   border: none;
   border-radius: 10px;
   cursor: pointer;
+  margin: 5px;
 }
 .upgrade1broke{
   font-size: 18px;
@@ -92,6 +93,7 @@ body {
   border: none;
   border-radius: 10px;
   cursor: pointer;
+  margin: 5px;
 }
 .buy {
   background-color: orange;
@@ -108,4 +110,8 @@ body {
   margin: 10px auto;
   color: darkorange; 
   -webkit-text-stroke-color: rgb(228, 9, 9);
+}
+.nmn{
+  background-color: red;
+
 }

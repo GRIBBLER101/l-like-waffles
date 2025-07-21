@@ -9,31 +9,39 @@ function App() {
   const [wfcount, setWfcount] = useState(0);
   const [wfplant, setWfplant] = useState(0);
   const [mg, setMg] = useState(0);
+  const [cbcm, setCbcm] = useState(0);
+  const [hasLoaded, setHasLoaded] = useState(false); // NEW STATE
 
-  // Load from localStorage on mount
+  // Load from localStorage on first mount
   useEffect(() => {
-    const savedData = JSON.parse(localStorage.getItem('waffleSave'));
+    const savedData = JSON.parse(localStorage.getItem('gameData'));
     if (savedData) {
-      setCount(savedData.count || 0);
-      setBin(savedData.bin || 0);
-      setDin(savedData.din || 1);
-      setWfcount(savedData.wfcount || 0);
-      setWfplant(savedData.wfplant || 0);
-      setMg(savedData.mg || 0);
+      setCount(savedData.count ?? 0);
+      setBin(savedData.bin ?? 0);
+      setDin(savedData.din ?? 1);
+      setWfcount(savedData.wfcount ?? 0);
+      setWfplant(savedData.wfplant ?? 0);
+      setMg(savedData.mg ?? 0);
+      setCbcm(savedData.cbcm ?? 0);
     }
+    setHasLoaded(true); // mark load complete
   }, []);
 
+  // Only save to localStorage if the data has loaded at least once
   useEffect(() => {
-    const dataToSave = {
+    if (!hasLoaded) return;
+
+    const gameData = {
       count,
       bin,
       din,
       wfcount,
       wfplant,
       mg,
+      cbcm,
     };
-    localStorage.setItem('waffleSave', JSON.stringify(dataToSave));
-  }, [count, bin, din, wfcount, wfplant, mg]);
+    localStorage.setItem('gameData', JSON.stringify(gameData));
+  }, [count, bin, din, wfcount, wfplant, mg, cbcm, hasLoaded]);
 
   function bigred(e) {
     e.preventDefault();
@@ -54,15 +62,18 @@ function App() {
       if (mg > 0) {
         setCount(prev => prev + mg);
       }
+      if (cbcm > 0){
+        setCount(prev => prev + (cbcm * 4));
+      }
     }, 1000);
 
     return () => clearInterval(coinInterval);
-  }, [mg]);
+  }, [mg, cbcm]);
 
   useEffect(() => {
     const waffleInterval = setInterval(() => {
       if (wfplant > 0) {
-        setWfcount(prev => prev + wfplant);
+        setWfcount(prev => prev + (wfplant*9));
       }
     }, 1000);
 
@@ -95,6 +106,12 @@ function App() {
         ) : (
           <button onClick={smallred} className='gilly'>-</button>
         )}
+        <div>
+          <button className='nmn'onClick={() => {
+            localStorage.removeItem('gameData');
+            window.location.reload();
+          }}>Reset Game</button>
+        </div>
       <div className='dfd'><p>{wfcount}: WAFFLES</p></div>
         
       </div>
@@ -133,9 +150,16 @@ function App() {
             setMg(mg + 1);
             setWfcount(wfcount - 50);
           }}>Money Granny(50waffles,1coin/sec)</button>
-          ) : (<button className='upgrade1broke'>Money Granny
-                                                    LOSER (50waffles,1coin/sec)</button>)}
+          ) : (<button className='upgrade1broke'>Money Granny LOSER (50waffles,1coin/sec)</button>)}
+          {wfcount >= 150 ? (<button className='upgrade1' onClick={() => {
+            setCbcm(cbcm + 1);
+            setWfcount(wfcount - 150);
+          }}>CRAPY BITCOINMINER 150WAFFLES/4cps</button>) : (
+           <button className='upgrade1broke' >CRAPY BITCOINMINER BROKE 150WAFFLES/4cps</button>
+          )}
+          
       </div>
+      
     </div>
   );
 }
