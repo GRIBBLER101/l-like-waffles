@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import { useState,useEffect } from 'react';
+import axios from 'axios';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -71,6 +72,15 @@ function App() {
   }, [mg, cbcm]);
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      console.log("pre func", wfcount);
+      updateWaffles(wfcount); // pass current value
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [wfcount]);
+
+  useEffect(() => {
     const waffleInterval = setInterval(() => {
       if (wfplant > 0) {
         setWfcount(prev => prev + (wfplant*9));
@@ -79,11 +89,32 @@ function App() {
 
     return () => clearInterval(waffleInterval);
   }, [wfplant]);
+  const name = "name";
+  const email = "emal";
+  const updateUser = async () => {
+    try {
+      const response = await axios.put("http://localhost:5000/", {
+        name,
+        email,
+      });
+      console.log("Updated data:", response.data);
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  };
+  const updateWaffles = async (value) => {
+    try {
+      console.log(value);
+      await axios.put("http://localhost:5000/waffles", { wfcount: value });
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className="App">
       <h1>I LOVE WAFFLES</h1>
-
+      <button onClick={updateUser}>Update</button>
       <div className='billy'>
         <img src='https://pngimg.com/uploads/coin/coin_PNG36910.png' alt='gimme your waffles'width="200"></img>
         {bin % 2 === 0 ?(
