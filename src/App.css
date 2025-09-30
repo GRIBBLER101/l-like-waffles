@@ -77,14 +77,20 @@ body {
 }
 .upgrade1 {
   font-size: 18px;
-  padding: 15px 30px;
-  width: 250px;
-  background-color: gold;
-  border: none;
-  border-radius: 10px;
   cursor: pointer;
   margin: 5px;
+
+  /* Reset default button styles */
+  border: none;
+  padding: 0;
+  background: none;
+
+  /* Optional: make text not sit flush against image */
+
+  align-items: center;
+  gap: 10px; /* space between image + text */
 }
+
 .upgrade1broke{
   font-size: 18px;
   padding: 15px 30px;
