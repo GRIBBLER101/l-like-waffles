@@ -1,6 +1,9 @@
 import '../App.css';
-import { useState,useEffect } from 'react';
+import { useState,useEffect, useContext } from 'react';
 import axios from 'axios';
+import { UserContext } from './UserContext';
+
+
 
 function Game () {
   const [count, setCount] = useState(0);
@@ -13,16 +16,19 @@ function Game () {
   const [hasLoaded, setHasLoaded] = useState(false); // NEW STATE
   const [wf, setWf] = useState(0);
 
-  const url = "https://waffles-backend-666679246883.us-central1.run.app"
+  const url1 = "https://waffles-backend-666679246883.us-central1.run.app"
+  const url = "http://localhost:5000"
+
+  const storedUser = localStorage.getItem("userData");
+  const userId = storedUser ? JSON.parse(storedUser).userId : null;
+
 
   // Load from localStorage on first mount
   useEffect(() => {
     const savedData = JSON.parse(localStorage.getItem('gameData'));
     if (savedData) {
-      setCount(savedData.count ?? 0);
       setBin(savedData.bin ?? 0);
       setDin(savedData.din ?? 1);
-      setWfcount(savedData.wfcount ?? 0);
       setWfplant(savedData.wfplant ?? 0);
       setWf(savedData.wf ?? 0);
       setMg(savedData.mg ?? 0);
@@ -36,10 +42,8 @@ function Game () {
     if (!hasLoaded) return;
 
     const gameData = {
-      count,
       bin,
       din,
-      wfcount,
       wfplant,
       wf,
       mg,
@@ -61,6 +65,30 @@ function Game () {
       setCount(count - 1);
     }
   }
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("userData");
+    const userId = storedUser ? JSON.parse(storedUser).userId : null;
+
+    if (!userId) {
+      console.error("User not logged in");
+      return;
+    }
+
+    // Fetch both coins and waffles when game starts
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${url1}/userdata/${userId}`);
+        setCount(res.data.count);
+        setWfcount(res.data.wfcount);
+      } catch (error) {
+        console.error("Error loading user data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
 
   useEffect(() => {
     const coinInterval = setInterval(() => {
@@ -109,7 +137,7 @@ useEffect(() => {
   const email = "emal";
   const updateUser = async () => {
     try {
-      const response = await axios.put(`${url}/`, {
+      const response = await axios.put(`${url1}/`, {
         name,
         email,
       });
@@ -118,35 +146,68 @@ useEffect(() => {
       console.error("Error updating user:", error);
     }
   };
-  const updateWaffles = async (value) => {
-    try {
-      console.log(value);
-      await axios.put(`${url}/waffles`, { wf1count: value });
-    } catch (err) {
-      console.error(err);
-    }
-  };
   const getwf = async () => {
-    try {
-        const waffle = await axios.get(`${url}/waffles`);
-        return waffle.data; // You likely want the .data property from the Axios response
-    } catch (err) {
-        console.error(err);
-    }
+  try {
+    const waffle = await axios.get(`${url1}/waffles/${userId}`);
+    return waffle.data;
+  } catch (err) {
+    console.error(err);
+  }
+};
+const getcoins = async () => {
+  try {
+    const coins = await axios.get(`${url1}/coins/${userId}`);
+    return coins.data;
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 (async () => {
     const data = await getwf();
     console.log("these wafflez are my FAV", data);
 })();
+
+useEffect(() => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (user && user.userId) {
+    axios.get(`${url1}/user/${user.userId}`).then(res => {
+      setWfcount(res.data.wfcount || 0);
+    });
+  }
+}, []);
+
+
 const updatecoins = async (value) => {
-    try {
-      console.log(value);
-      await axios.put(`${url}/coins`, { count: value });
-    } catch (err) {
-      console.error(err);
+  try {
+    console.log("Sending userId:", userId);
+
+    await axios.put(`${url1}/coins`, { count: value, userId });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const updateWaffles = async (value) => {
+  try {
+    const storedUser = localStorage.getItem("userData"); // ✅ same as updatecoins
+    const userId = storedUser ? JSON.parse(storedUser).userId : null;
+
+    if (!userId) {
+      console.error("User not logged in or missing ID");
+      return;
     }
-  };
+
+    console.log("Updating waffles:", value);
+    await axios.put(`${url1}/waffles`, {
+      userId,
+      wfcount: value
+    });
+  } catch (err) {
+    console.error("Failed to update waffles:", err.response?.data || err.message);
+  }
+};
+
 
   return (
     <div className="App">
@@ -163,7 +224,7 @@ const updatecoins = async (value) => {
             {count} :coins
           </p>
         )}
-      
+    
         {bin % 2 === 0 ? (
           <button onClick={bigred} className='r_gilly'>+</button>
         ) : (

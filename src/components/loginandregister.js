@@ -61,6 +61,8 @@ export default function AuthForm() {
                         userId: response.data.userId,
                         userType: response.data.userType
                     };
+                    localStorage.setItem("userData", JSON.stringify(userData));
+
                     updateUser(userData);
                     handleSuccess(formType);
                 } else if (formType.includes('Register')) {
