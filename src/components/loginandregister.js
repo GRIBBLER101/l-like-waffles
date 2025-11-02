@@ -11,7 +11,7 @@ export default function AuthForm() {
     const [formType, setFormType] = useState('userLogin');
     const { updateUser } = useContext(UserContext);
 
-    const b_url = "https://waffles-backend-666679246883.us-central1.run.app"
+    const b_url = "https://backend-666679246883.us-central1.run.app"
 
     const handleSuccess = (type) => {
         setTimeout(() => {

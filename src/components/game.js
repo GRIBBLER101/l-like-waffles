@@ -16,7 +16,7 @@ function Game () {
   const [hasLoaded, setHasLoaded] = useState(false); // NEW STATE
   const [wf, setWf] = useState(0);
 
-  const url1 = "https://waffles-backend-666679246883.us-central1.run.app"
+  const url1 = "https://backend-666679246883.us-central1.run.app"
   const url = "http://localhost:5000"
 
   const storedUser = localStorage.getItem("userData");
